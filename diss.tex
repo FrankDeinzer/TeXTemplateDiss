@@ -1,0 +1,197 @@
+%% 
+%% Usage instructions
+%% 
+%% This template can be used in two different ways
+%% 1) Use with nowadays pdflatex:  pdflatex diss
+%% 2) Use the old way with latex:  latex diss; dvips diss
+%%    This way you can use things like psfrag
+%% 
+%% Bibliography: We use biber as backend. So a complete compilation run looks like this
+%% 1) Using pdflatex: pdflatex diss; biber diss; pdflatex diss; pdflatex diss
+%% 2) Using Latex: latex diss; biber diss; latex diss; latex diss; dvips diss; ps2pdf14 -dUseFlateCompression#true -dPDFSETTINGS#/prepress -dEmbedAllFonts#true -sPAPERSIZE#a4 diss.ps diss.pdf
+%% 
+%% 
+%% 
+%% 
+%% 
+%% 
+%% 
+%% 
+%% 
+%% 
+%% If you have any questions, problems or feature request: frank.deinzer@fhws.de
+%% 
+
+
+
+\documentclass[american,twoside,12pt]{report}
+
+% uncomment if you want to use the debugging features
+%\def\DEBUG{debug}
+
+\ifdefined\DEBUG%
+	\PassOptionsToPackage{showframe}{geometry}	% DEBUG, FRAME AROUND DOCUMENT
+\fi
+
+\usepackage[a4paper,vmargin=35mm,hmargin=25mm]{geometry}
+\usepackage{ifpdf}    % check if we are running pdflatex or something else (may be usefull for psfrag things)
+\usepackage{setspace}	% baselinestretch?!
+\usepackage{times}		% font, times package is a little outdated, but all the new one create problems  
+\onehalfspacing
+\let\oldChapter=\chapter
+\def\chapter{\cleardoublepage\oldChapter}
+\pagestyle{headings}
+% better monospaced font
+\usepackage{inconsolata}
+
+\usepackage[utf8]{inputenc}
+
+\PassOptionsToPackage{hyphens}{url}
+\ifdefined\DEBUG%
+	\usepackage[colorlinks]{hyperref}		% DEBUG, COLOR LINKS
+	\newcommand{\debugRed}{\color{red}}
+	\newcommand{\debugBlue}{\color{blue}}
+	\newcommand{\debugBlueB}{\textcolor{blue}}
+	\newcommand{\markEq}{ \color{red} }
+	\newcommand{\markText}[1]{ {\color{red} #1} }
+\else
+	\usepackage[hidelinks]{hyperref}		% PRINT
+	\newcommand{\debugRed}{}			
+	\newcommand{\debugBlue}{}
+	\newcommand{\debugBlueB}{}
+	\newcommand{\markEq}{}
+	\newcommand{\markText}[1]{#1}
+\fi%
+
+\usepackage{graphicx}
+\usepackage{wrapfig}	% floating wrapped figures
+\graphicspath{{images/}}   % graphics search paths, you can give multiple paths
+\usepackage{psfrag}
+
+\usepackage{sidecap}	% side-captions
+\usepackage[font=small]{caption}	
+\usepackage[font=small]{subcaption}	
+
+% math
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{braket}
+\usepackage{mathtools}
+% math defines. Add your own defines 
+\def\mat#1{\ensuremath{\boldsymbol#1}}
+\def\vec#1{\ensuremath{\boldsymbol#1}}
+\makeatletter 
+\def\argmax{\mathop{\operator@font argmax}}
+\def\argmin{\mathop{\operator@font argmin}}
+\makeatother
+
+
+% rotated table
+\usepackage{rotating}
+
+% toprule and midrule instead of hline
+\usepackage{booktabs}
+
+% https://tex.stackexchange.com/questions/247531/how-to-use-boondox-calligraphic-font-in-latex-without-replacing-mathcal-command
+% keep original mathcal, add other fonts using other commands
+\DeclareFontFamily{U}{BOONDOX-calo}{\skewchar\font=45 }
+\DeclareFontShape{U}{BOONDOX-calo}{m}{n}{
+	<-> s*[1.05] BOONDOX-r-calo}{}
+\DeclareFontShape{U}{BOONDOX-calo}{b}{n}{
+	<-> s*[1.05] BOONDOX-b-calo}{}
+\DeclareMathAlphabet{\mathcalboondox}{U}{BOONDOX-calo}{m}{n}
+\SetMathAlphabet{\mathcalboondox}{bold}{U}{BOONDOX-calo}{b}{n}
+\DeclareMathAlphabet{\mathbcalboondox}{U}{BOONDOX-calo}{b}{n}
+
+% algorithm
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+
+% tables, colored table cells
+\usepackage{multirow,tabularx}
+
+% sources (bibtex) 
+% options: alphabetic, ext-alphabetic, nature, science, ieee
+\usepackage[backend=biber,maxnames=99,language=english,style=alphabetic,sorting=nty,sortcites=true,doi=false,isbn=false,backref=true,backrefstyle=two,]{biblatex}
+%\DeclareFieldFormat{issuedate}{#1}		% when using ext-alphabetic, remove the () around the year for @article...
+\addbibresource{diss.bib}   % add your own bib ressources with more addbibresource
+
+% index
+%\usepackage{makeidx}
+\usepackage{imakeidx}
+\makeindex{}
+
+\hbadness=10000
+\clubpenalty = 10000 % schliesst Schusterjungen aus
+\widowpenalty = 10000 % schliesst Hurenkinder aus
+
+\usepackage{nicefrac}	% for horizontal fractions (texlive: units package)
+
+\begin{document}
+
+	\cleardoublepage
+	
+	{
+		\thispagestyle{empty}
+		\input{chapters/title.tex}
+	}
+
+	{
+		\thispagestyle{empty}
+		\input{chapters/prefaces.tex}
+	}
+	
+	{
+		\cleardoublepage
+		\pagestyle{plain}
+		\pagenumbering{roman} 
+		\tableofcontents
+		\cleardoublepage
+		\pagestyle{empty}
+	}
+	
+	\pagenumbering{arabic}
+	\input{chapters/introduction.tex}
+	
+	\cleardoublepage
+	\input{chapters/experiments.tex}
+
+	\cleardoublepage
+	\input{chapters/summary.tex}
+
+	\cleardoublepage
+	\input{chapters/futureWork.tex}
+
+	% List of figures
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\listfigurename}
+	\listoffigures
+	\cleardoublepage
+
+	% List of tables
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\listtablename}
+	\renewcommand{\listtablename}{List of Tables\vspace{-5mm}}	
+	\listoftables
+	\cleardoublepage
+
+	% Literatur
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\bibname}
+	%\printbibliography[title={All Bib}]
+	\printbibliography
+	\cleardoublepage
+	
+	\begin{appendix}
+	\cleardoublepage
+	\input{chapters/appendix.tex}
+	\end{appendix}
+	
+	\cleardoublepage
+	%% index
+	\phantomsection
+	\printindex
+	
+	\cleardoublepage
+
+\end{document}
